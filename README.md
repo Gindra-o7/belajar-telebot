@@ -49,13 +49,13 @@ docker-compose up -d --build
 ngrok http 8000
 
 # Set webhook
-python set_webhook.py https://xxxx.ngrok.io/webhook/riq23rfu02diohq39-8RC3Y89RCNY3CR89-CW3QR8YNCQCQqwprbue
+python set_webhook.py https://xxxx.ngrok.io/webhook/your_webhook_secret
 ```
 
 **Production:**
 
 ```bash
-python set_webhook.py https://yourdomain.com/webhook/riq23rfu02diohq39-8RC3Y89RCNY3CR89-CW3QR8YNCQCQqwprbue
+python set_webhook.py https://yourdomain.com/webhook/your_webhook_secret
 ```
 
 ### 4. Test Bot
