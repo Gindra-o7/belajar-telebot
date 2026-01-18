@@ -74,6 +74,3 @@ logs/
 
 # Telegram
 webhook_url.txt
-
-# docker-compose
-docker-compose.yml
