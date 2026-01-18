@@ -152,5 +152,3 @@ docker-compose restart postgres
 ```
 
 ---
-
-**Bot berhasil dibuat! 🎉**
