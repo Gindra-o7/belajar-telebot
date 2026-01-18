@@ -69,7 +69,7 @@ services:
       - stockbot_network
     restart: unless-stopped
 
-  # Consumer Worker (dapat di-scale)
+  # Consumer Worker (auto-scaled by autoscaler service)
   worker:
     build:
       context: .
@@ -92,8 +92,6 @@ services:
       - stockbot_network
     restart: unless-stopped
     deploy:
-      mode: replicated
-      replicas: 3
       resources:
         limits:
           cpus: "0.5"
@@ -101,6 +99,36 @@ services:
         reservations:
           cpus: "0.25"
           memory: 256M
+
+  # Autoscaler Service
+  autoscaler:
+    build:
+      context: .
+      dockerfile: Dockerfile.autoscaler
+    container_name: stockbot_autoscaler
+    environment:
+      - RABBITMQ_HOST=${RABBITMQ_HOST}
+      - RABBITMQ_PORT=${RABBITMQ_PORT}
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PASS=${RABBITMQ_PASS}
+      - QUEUE_NAME=${QUEUE_NAME}
+      - MIN_WORKERS=${MIN_WORKERS:-1}
+      - MAX_WORKERS=${MAX_WORKERS:-10}
+      - SCALE_UP_THRESHOLD=${SCALE_UP_THRESHOLD:-10}
+      - SCALE_DOWN_THRESHOLD=${SCALE_DOWN_THRESHOLD:-2}
+      - CHECK_INTERVAL=${CHECK_INTERVAL:-30}
+      - COOLDOWN_PERIOD=${COOLDOWN_PERIOD:-60}
+      - WORKER_SERVICE_NAME=worker
+      - COMPOSE_FILE=docker-compose.yml
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - .:/app/project
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - stockbot_network
+    restart: unless-stopped
 
 networks:
   stockbot_network:
